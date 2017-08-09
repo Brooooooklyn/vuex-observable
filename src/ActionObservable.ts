@@ -23,15 +23,17 @@ export class ActionsObservable<T> extends Observable<T> {
     return new this(from(ish, scheduler))
   }
 
-  constructor(actionsSubject: Observable<T>) {
-    super()
-    this.source = actionsSubject
+  constructor(actionsSubject?: Observable<T>) {
+    super();
+    if (actionsSubject != null)
+      this.source = actionsSubject;
   }
 
-  lift(operator: Function): Observable<T> {
-    const observable = new ActionsObservable(this)
-    observable.operator = operator
-    return observable
+  lift<R>(operator: Operator<T, R>): Observable<R> {
+    const observable = new ActionsObservable<R>();
+    observable.source = this;
+    observable.operator = operator;
+    return observable;
   }
 
   ofType(...keys: string[]) {
